@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 const dataa = [
   {
@@ -25,6 +26,15 @@ const dataa = [
   },
 ];
 
+const styleResponsiveShow = {
+  display: "flex",
+  animation: "0.2s ease-in-out 0s 1 normal none running formRight",
+};
+const styleResponsiveHide = {
+  animation: "0.2s ease-in-out 0s 1 reverse none running formRight",
+  display: "none",
+};
+
 export default function App() {
   const [menu, setMenu] = useState(false);
 
@@ -35,7 +45,7 @@ export default function App() {
   return (
     <div className="container">
       <Header menu={menu} handleMenu={handleMenu} />
-      <Cards />
+      <Cards menu={menu} />
     </div>
   );
 }
@@ -43,7 +53,7 @@ export default function App() {
 function Header({ menu, handleMenu }) {
   return (
     <header>
-      <h1 className="logo">
+      <h1 className={`${menu && "blurred "} logo`}>
         to<span className="logo-do">do.</span>
       </h1>
       <div></div>
@@ -58,7 +68,7 @@ function Header({ menu, handleMenu }) {
   );
 }
 
-function Cards() {
+function Cards({ menu }) {
   const [sidebar, setSidebar] = useState("all");
   const [theme, setTheme] = useState("dark");
 
@@ -77,15 +87,27 @@ function Cards() {
         setSidebar={setSidebar}
         toggleTheme={toggleTheme}
         theme={theme}
+        menu={menu}
       />{" "}
-      <Main />
+      <Main menu={menu} />
     </div>
   );
 }
 
-function Sidebar({ sidebar, setSidebar, toggleTheme, theme }) {
+function Sidebar({ sidebar, setSidebar, toggleTheme, theme, menu }) {
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 480px)" });
+
   return (
-    <sidebar className="sidebar">
+    <sidebar
+      className="sidebar"
+      style={
+        isSmallScreen && menu
+          ? styleResponsiveShow
+          : isSmallScreen && !menu
+          ? styleResponsiveHide
+          : {}
+      }
+    >
       <div className="filters">
         <div className="filters-title-grp">
           <h2 className="section-header">Filters</h2>
@@ -135,11 +157,19 @@ function Sidebar({ sidebar, setSidebar, toggleTheme, theme }) {
   );
 }
 
-function Main() {
+function Main({ menu }) {
   const defaultWrapper = "T";
   const [wrapper, setWrapper] = useState(defaultWrapper);
   const [id, setId] = useState(0);
   const [data, setdata] = useState(dataa);
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 480px)" });
+
+  const styleMain = {
+    display: "block",
+  };
+  const styleMainHide = {
+    display: "none",
+  };
 
   function handleWrapperto(e, wrapper) {
     e.preventDefault();
@@ -155,7 +185,10 @@ function Main() {
   }
 
   return (
-    <main className="content" style={{ transition: "all 0.2s ease-out 0s" }}>
+    <main
+      className="content"
+      style={isSmallScreen && menu ? styleMainHide : styleMain}
+    >
       {wrapper === "T" && (
         <TWrapper
           data={data}
