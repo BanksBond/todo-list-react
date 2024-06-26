@@ -4,7 +4,7 @@ import { useMediaQuery } from "react-responsive";
 const dataa = [
   {
     id: 0,
-    taskTitle: "Revise JavaScript",
+    taskTitle: "Click on me!",
     taskInfo: [
       "- Expand tasks to view additional details about them.",
       "- Write notes, add dates and star tasks from the form pane.",
@@ -15,10 +15,10 @@ const dataa = [
   },
   {
     id: 1,
-    taskTitle: "Learn ReactJS",
+    taskTitle: "Me too!",
     taskInfo: [
       "- Filter created tasks by All, Starred, Today or Week.",
-      "- Add  projects by clicking (+) and pressing Enter.",
+      "- You can change the theme by clicking toggle in sidebar.",
       "- Thank you for checking out my project!",
     ],
     starred: true,
