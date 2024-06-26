@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import emptyBox from "./images/empty-box.png";
+import useFavicon from "./useFavicon";
 
 const dataa = [
   {
@@ -76,6 +78,8 @@ function Cards({ menu }) {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  useFavicon(theme);
+
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
@@ -89,7 +93,7 @@ function Cards({ menu }) {
         theme={theme}
         menu={menu}
       />{" "}
-      <Main menu={menu} />
+      <Main menu={menu} sidebar={sidebar} />
     </div>
   );
 }
@@ -157,7 +161,7 @@ function Sidebar({ sidebar, setSidebar, toggleTheme, theme, menu }) {
   );
 }
 
-function Main({ menu }) {
+function Main({ menu, sidebar }) {
   const defaultWrapper = "T";
   const [wrapper, setWrapper] = useState(defaultWrapper);
   const [id, setId] = useState(0);
@@ -184,6 +188,11 @@ function Main({ menu }) {
     setId(Number(id));
   }
 
+  function handleDelete(id) {
+    setdata(data.filter((task) => task.id !== id));
+    // console.log(data.filter((task) => task.id !== id));
+  }
+
   return (
     <main
       className="content"
@@ -191,10 +200,12 @@ function Main({ menu }) {
     >
       {wrapper === "T" && (
         <TWrapper
+          sidebar={sidebar}
           data={data}
           onWO={handleWrapperToO}
           onWrapperChange={handleWrapper}
           onSetId={setId}
+          handleDelete={handleDelete}
         />
       )}
       {wrapper === "F" && (
@@ -222,25 +233,56 @@ const showStyle = {
   flexDirection: "column",
 };
 
-function TWrapper({ data, onWrapperChange, onWO }) {
+function TWrapper({ data, onWrapperChange, onWO, handleDelete, sidebar }) {
   return (
     <div className="t-wrapper" style={showStyle}>
       <div className="title-grp">
         <h2 className="section-header">Tasks</h2>
         <span className="current-title"></span>
       </div>
-      <div className="tasks">
-        {data.map((task) => (
-          <Task
-            key={task.id}
-            id={task.id}
-            title={task.taskTitle}
-            info={task.taskInfo}
-            starred={task.starred}
-            onWO={onWO}
-          />
-        ))}
-      </div>
+      {data.length !== 0 ? (
+        <div className="tasks">
+          {sidebar === "all" ? (
+            data.map((task) => (
+              <Task
+                key={task.id}
+                id={task.id}
+                title={task.taskTitle}
+                info={task.taskInfo}
+                starred={task.starred}
+                onWO={onWO}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : sidebar === "star" ? (
+            data
+              .filter((task) => task.starred)
+              .map((task) => (
+                <Task
+                  key={task.id}
+                  id={task.id}
+                  title={task.taskTitle}
+                  info={task.taskInfo}
+                  starred={task.starred}
+                  onWO={onWO}
+                  onDelete={handleDelete}
+                />
+              ))
+          ) : (
+            <div className="emptyBox">
+              <img className="" src={emptyBox} alt="emptyBox" />
+              <p>Sorting Coming Soon...</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="emptyBox">
+          <img className="" src={emptyBox} alt="emptyBox" />
+          <p style={{ display: "inline-flex", alignItems: "center" }}>
+            No Tasks here... Go on add some 👇
+          </p>
+        </div>
+      )}
       <button className="add-btn" onClick={() => onWrapperChange("F")}>
         Add Task
       </button>
@@ -305,7 +347,7 @@ function FWrapper({ data, onWrapperChange, onSetData, onWrapper }) {
           name="taskTitle"
           value={formData.taskTitle}
           onChange={handleInputChange}
-          placeholder="Task Title"
+          placeholder="Your Task Title here..."
         />
 
         <label htmlFor="note">
@@ -318,7 +360,7 @@ function FWrapper({ data, onWrapperChange, onSetData, onWrapper }) {
           onChange={(e) =>
             setFormData({ ...formData, taskInfo: e.target.value.split("\n") })
           }
-          placeholder="Task Info (one line per item)"
+          placeholder="Your list of Tasks here..."
         ></textarea>
 
         <div className="extras-wrapper">
@@ -340,6 +382,7 @@ function FWrapper({ data, onWrapperChange, onSetData, onWrapper }) {
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
+                placeholder="mm/dd/yyyy"
               />
             </label>
           </div>
@@ -421,7 +464,7 @@ function OWrapper({ data, onWrapperChange, OID }) {
   );
 }
 
-function Task({ id, title, starred, onWO }) {
+function Task({ id, title, starred, onWO, onDelete }) {
   // console.log(info.join("\n"));
   const [selected, setSelected] = useState(false);
 
@@ -456,7 +499,12 @@ function Task({ id, title, starred, onWO }) {
           <i className="options edit material-symbols-rounded">edit</i>
         )}
         {selected && (
-          <i className="options delete material-symbols-rounded">delete</i>
+          <i
+            onClick={() => onDelete(id)}
+            className="options delete material-symbols-rounded"
+          >
+            delete
+          </i>
         )}
         {!selected && (
           <i className={`${starred ? "fa-solid" : "fa-regular"} fa-star`}></i>

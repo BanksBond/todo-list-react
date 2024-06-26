@@ -831,7 +831,7 @@ header div {
   html,
   body,
   .container {
-    overflow: hidden;
+    /* overflow: hidden; */
     min-height: -webkit-fill-available;
   }
   header {
@@ -937,4 +937,30 @@ header div {
 .show {
   transition: all 0.2s ease-out 0s;
   background-color: var(--component);
+}
+
+.emptyBox {
+  position: relative;
+  top: 30%;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding-bottom: 2rem;
+  align-items: center;
+}
+
+.emptyBox img {
+  opacity: 20%;
+  width: 30%;
+}
+
+.mask-emoji {
+  display: inline-block;
+  mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text y="50%" font-size="24">🌟</text></svg>');
+  mask-size: contain;
+  -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><text y="50%" font-size="24">🌟</text></svg>');
+  -webkit-mask-size: contain;
+  background-color: #84849d;
+  width: 1em;
+  height: 1em;
 }
