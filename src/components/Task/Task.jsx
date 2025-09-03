@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-export default function Task({ id, title, starred, onWO, onDelete }) {
+export default function Task({
+  id,
+  title,
+  starred,
+  handleClickOnTask,
+  onDelete,
+}) {
   // console.log(info.join("\n"));
   const [selected, setSelected] = useState(false);
 
@@ -27,7 +33,7 @@ export default function Task({ id, title, starred, onWO, onDelete }) {
           } check`}
         ></i>
       </div>
-      <div onClick={() => onWO(id)} className="task-title">
+      <div onClick={() => handleClickOnTask(id)} className="task-title">
         <p className={` ${selected && "strike-through"} task-title`}>{title}</p>
       </div>
       <div className="actions">

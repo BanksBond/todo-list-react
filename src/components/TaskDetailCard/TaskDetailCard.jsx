@@ -1,11 +1,11 @@
-export default function OWrapper({ data, onWrapperChange, OID }) {
+export default function TaskDetailCard({ data, onWrapperChange, OID }) {
   // console.log(data[OID].taskTitle);
   // console.log(data.find((item) => item.id === OID));
   const currTask = data.find((item) => item.id === OID);
 
   return (
     <div
-      className="o-wrapper"
+      className="task-detail-card"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -44,7 +44,7 @@ export default function OWrapper({ data, onWrapperChange, OID }) {
         <div className="extras-wrapper">
           <div className="btn-group">
             <button
-              onClick={() => onWrapperChange("T")}
+              onClick={() => onWrapperChange("TaskList")}
               className="back-btn fa-sharp fa-solid fa-chevron-left"
             ></button>
           </div>
