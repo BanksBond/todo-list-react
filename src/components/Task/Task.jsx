@@ -1,55 +1,83 @@
-import { useState } from "react";
+import React from "react";
 
 export default function Task({
-  id,
-  title,
-  starred,
+  task,
   handleClickOnTask,
   onDelete,
+  isDeleting,
+  toggleComplete,
+  isToggling,
+  toEditTaskWrapper,
 }) {
-  // console.log(info.join("\n"));
-  const [selected, setSelected] = useState(false);
-
-  const styleCheck = {
-    transition: "all 0.2s ease-in-out 0s",
-    backgroundColor: "transparent",
-    boxShadow: "none",
-  };
-  const styleNone = {
-    borderRadius: "10px",
-  };
+  const { id, title, starred, completed } = task;
 
   return (
     <div
-      dataa-id={id}
-      className="task"
-      style={selected ? styleCheck : styleNone}
+      data-id={id}
+      className={`task ${completed ? "task-completed" : ""}`}
+      style={{
+        transition: "all 0.2s ease-in-out",
+        opacity: isToggling ? 0.5 : 1, // dim while updating
+        pointerEvents: isToggling ? "none" : "auto",
+      }}
     >
-      <div onClick={() => setSelected(!selected)} className="checkmark">
-        <input type="checkbox" className="hide-check" />
-        <i
-          className={`${
-            selected ? "fa-solid  fa-circle-check" : "fa-regular  fa-circle"
-          } check`}
-        ></i>
-      </div>
-      <div onClick={() => handleClickOnTask(id)} className="task-title">
-        <p className={` ${selected && "strike-through"} task-title`}>{title}</p>
-      </div>
-      <div className="actions">
-        {!selected && (
-          <i className="options edit material-symbols-rounded">edit</i>
-        )}
-        {selected && (
+      {/* ✅ Toggle Complete */}
+      <div
+        onClick={() => !isToggling && toggleComplete(id)}
+        className="checkmark"
+      >
+        <input
+          type="checkbox"
+          className="hide-check"
+          checked={completed}
+          readOnly
+        />
+        {isToggling ? (
+          <i className="fa-solid fa-spinner fa-spin check" /> // spinner while updating
+        ) : (
           <i
-            onClick={() => onDelete(id)}
-            className="options delete material-symbols-rounded"
-          >
-            delete
-          </i>
+            className={`${
+              completed ? "fa-solid fa-circle-check" : "fa-regular fa-circle"
+            } check`}
+          />
         )}
-        {!selected && (
-          <i className={`${starred ? "fa-solid" : "fa-regular"} fa-star`}></i>
+      </div>
+
+      {/* ✅ Title */}
+      <div onClick={() => handleClickOnTask(id)} className="task-title">
+        <p className={`${completed ? "strike-through" : ""} task-title`}>
+          {title}
+        </p>
+      </div>
+
+      {/* ✅ Actions */}
+      <div className="actions">
+        {isDeleting === id ? (
+          <i className="options delete fa-solid fa-spinner fa-spin"></i>
+        ) : (
+          <>
+            {!completed && (
+              <i
+                onClick={() => toEditTaskWrapper(id)}
+                className="options edit material-symbols-rounded"
+              >
+                edit
+              </i>
+            )}
+            {completed && (
+              <i
+                onClick={() => onDelete(id)}
+                className="options delete material-symbols-rounded"
+              >
+                delete
+              </i>
+            )}
+            {!completed && (
+              <i
+                className={`${starred ? "fa-solid" : "fa-regular"} fa-star`}
+              ></i>
+            )}
+          </>
         )}
       </div>
     </div>

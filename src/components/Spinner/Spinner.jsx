@@ -1,7 +1,12 @@
 import "./spinner.css";
 
-function Spinner() {
-  return <span class="loader"></span>;
+function Spinner({ size, color }) {
+  return (
+    <i
+      style={{ fontSize: size, color: "var(--dk-text)" }}
+      className="fa-solid fa-spinner fa-spin spinner"
+    ></i>
+  );
 }
 
 export default Spinner;

@@ -372,6 +372,11 @@ header div {
   height: 35vh;
   padding: 2px;
 }
+.cards .content .task-list-card .isLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .cards .content .task-list-card .task {
   user-select: none;
   z-index: 0;
@@ -404,6 +409,7 @@ header div {
   transform: scale(0.8);
 }
 .cards .content .task-list-card .task .fa-circle,
+.cards .content .task-list-card .task .fa-spinner,
 .cards .content .task-list-card .task .fa-circle-check {
   height: 32px;
   padding: 0 14px;

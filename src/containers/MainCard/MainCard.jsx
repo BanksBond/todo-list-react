@@ -1,15 +1,26 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import TaskDetailCard from "../../components/TaskDetailCard/TaskDetailCard";
+import { useDeleteTask } from "../../api/useDeleteTask";
+import { useGetTodos } from "../../api/useGetTodos";
+import { useToggleTaskComplete } from "../../api/useToggleTaskComplete";
 import AddTaskCard from "../../components/AddTaskCard/AddTaskCard";
+import TaskDetailCard from "../../components/TaskDetailCard/TaskDetailCard";
 import TaskListCard from "../../components/TaskListCard/TaskListCard";
 
 export default function MainCard({ menu, sidebar }) {
-  /** "TaskList", "AddTask", "TaskDetail" */
+  /** "TaskList", "AddTask", "TaskDetail", "EditTask" */
   const [wrapper, setWrapper] = useState("TaskList");
+
+  const { data, setData, loading, refetch } = useGetTodos();
+  const { toggleComplete, togglingIds } = useToggleTaskComplete(setData);
+  const { deleteTask, deletingIds } = useDeleteTask(setData, {
+    onSuccess: refetch,
+  });
+  const isToggling = (id) => togglingIds.includes(id);
+  const isDeleting = (id) => deletingIds.includes(id);
+  console.log({ data });
   const [id, setId] = useState(0);
-  const [data, setdata] = useState([]);
+  // const [data, setData] = useState([]);
   const isSmallScreen = useMediaQuery({ query: "(max-width: 480px)" });
 
   const styleMain = {
@@ -19,19 +30,17 @@ export default function MainCard({ menu, sidebar }) {
     display: "none",
   };
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/todos")
-      .then((res) => setdata(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
   function handleWrapperChange(wrapper) {
     setWrapper(wrapper);
   }
 
   function handleGotoDetail(id) {
     setWrapper("TaskDetail");
+    setId(Number(id));
+  }
+
+  function toEditTaskWrapper(id) {
+    setWrapper("EditTask");
     setId(Number(id));
   }
 
@@ -44,16 +53,31 @@ export default function MainCard({ menu, sidebar }) {
         <TaskListCard
           sidebar={sidebar}
           data={data}
+          setData={setData}
           onClickTask={handleGotoDetail}
           onWrapperChange={handleWrapperChange}
-          onSetId={setId}
+          toggleComplete={toggleComplete}
+          isToggling={isToggling}
+          deleteTask={deleteTask}
+          isDeleting={isDeleting}
+          toEditTaskWrapper={toEditTaskWrapper}
+          loading={loading}
         />
       )}
       {wrapper === "AddTask" && (
         <AddTaskCard
           data={data}
           onWrapperChange={handleWrapperChange}
-          onSetData={setdata}
+          onSetData={setData}
+        />
+      )}
+      {wrapper === "EditTask" && (
+        <AddTaskCard
+          data={data}
+          onWrapperChange={handleWrapperChange}
+          onSetData={setData}
+          isEditMode={true}
+          id={id}
         />
       )}
       {wrapper === "TaskDetail" && (
@@ -61,7 +85,7 @@ export default function MainCard({ menu, sidebar }) {
           wrapper={wrapper}
           onWrapperChange={handleWrapperChange}
           data={data}
-          setData={setdata}
+          setData={setData}
           OID={id}
         />
       )}
